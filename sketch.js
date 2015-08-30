@@ -13,7 +13,7 @@ var MARGIN = 40;
 
 
 function setup() {
-createCanvas(1000,1000);
+createCanvas(800,800);
 
 bulletImage = loadImage("assets/asteroids_bullet.png");
 shipImage = loadImage("assets/asteroids_ship0001.png");
@@ -39,13 +39,13 @@ for(var i = 0; i<8; i++) {
   var py = height/2+ 1000 * sin(radians(ang));
   createAsteroid(3, px, py);
   }
-}
 
-for(var i = 0; i<4; i++) {
-  var ang = random(360);
+for(var i = 2; i<4; i++) {
+  // var ang = random(360);
+  var clockwiseDir = Boolean(Math.floor(Math.random() * 2));
   var px = width/2;
   var py = height/2;
-  createRing(i, px, py);
+  createRing(i+1, px, py, clockwiseDir);
   }
 }
 
@@ -67,6 +67,8 @@ function draw() {
   asteroids.overlap(bullets, asteroidHit);
   
   ship.bounce(asteroids);
+
+  asteroids.bounce(rings);
   
   if(keyDown(LEFT_ARROW))
     ship.rotation -= 4;
@@ -103,10 +105,13 @@ function createAsteroid(type, x, y) {
   //a.debug = true;
   a.type = type;
   
+  if(type == 3)
+    a.scale = .3;  
   if(type == 2)
-    a.scale = .6;
+    a.scale = .2;
+
   if(type == 1)
-    a.scale = .3;
+    a.scale = .1;
   
   a.mass = 2+a.scale;
   a.setCollider("circle", 0, 0, 50);
@@ -114,22 +119,27 @@ function createAsteroid(type, x, y) {
   return a;
 }
 
-function createRing(type, x, y) {
+function createRing(type, x, y, dir) {
   var a = createSprite(x, y);
   // var img  = loadImage("assets/asteroid"+floor(random(0,3))+".png");
   var img  = loadImage("assets/ring1.png");
   a.addImage(img);
   // a.setSpeed(2.5-(type/2), random(360));
-  a.rotationSpeed = .5;
+  if (dir == true) { 
+    a.rotationSpeed = .5;
+  } else {
+    a.rotationSpeed = -.5;
+  }
   //a.debug = true;
   a.type = type;
   
-  if(type == 2)
+  if(type == 3)
     a.scale = .6;
-  if(type == 1)
+  if(type == 2)
     a.scale = .3;
   
   a.mass = 2+a.scale;
+  a.immovable = true;
   // a.setCollider("circle", 0, 0, 50);
   rings.add(a);
   return a;
