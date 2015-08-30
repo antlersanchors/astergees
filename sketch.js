@@ -1,35 +1,51 @@
 //asteroid clone (core mechanics only)
 //arrow keys to move + x to shoot
+//now making it more of a pacifistic Galaga-like
 
 var bullets;
 var asteroids;
 var ship;
 var shipImage, bulletImage, particleImage;
+
+var rings;
+var ringImage;
 var MARGIN = 40;
 
+
 function setup() {
-createCanvas(800,600);
+createCanvas(1000,1000);
 
 bulletImage = loadImage("assets/asteroids_bullet.png");
 shipImage = loadImage("assets/asteroids_ship0001.png");
 particleImage = loadImage("assets/asteroids_particle.png");
+// ringImage = loadImage("assets/ring1.png");
 
 ship = createSprite(width/2, height/2);
 ship.maxSpeed = 6;
 ship.friction = .98;
 ship.setCollider("circle", 0,0, 20);
 
+
 ship.addImage("normal", shipImage);
 ship.addAnimation("thrust", "assets/asteroids_ship0002.png", "assets/asteroids_ship0007.png");
 
 asteroids = new Group();
 bullets = new Group();
+rings = new Group();
 
 for(var i = 0; i<8; i++) {
   var ang = random(360);
   var px = width/2 + 1000 * cos(radians(ang));
   var py = height/2+ 1000 * sin(radians(ang));
   createAsteroid(3, px, py);
+  }
+}
+
+for(var i = 0; i<4; i++) {
+  var ang = random(360);
+  var px = width/2;
+  var py = height/2;
+  createRing(i, px, py);
   }
 }
 
@@ -95,6 +111,27 @@ function createAsteroid(type, x, y) {
   a.mass = 2+a.scale;
   a.setCollider("circle", 0, 0, 50);
   asteroids.add(a);
+  return a;
+}
+
+function createRing(type, x, y) {
+  var a = createSprite(x, y);
+  // var img  = loadImage("assets/asteroid"+floor(random(0,3))+".png");
+  var img  = loadImage("assets/ring1.png");
+  a.addImage(img);
+  // a.setSpeed(2.5-(type/2), random(360));
+  a.rotationSpeed = .5;
+  //a.debug = true;
+  a.type = type;
+  
+  if(type == 2)
+    a.scale = .6;
+  if(type == 1)
+    a.scale = .3;
+  
+  a.mass = 2+a.scale;
+  // a.setCollider("circle", 0, 0, 50);
+  rings.add(a);
   return a;
 }
 
