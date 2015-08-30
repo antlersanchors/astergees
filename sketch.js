@@ -161,7 +161,7 @@ function createTrump(type, x, y) {
 function createRing(type, x, y, dir) {
   var r = createSprite(x, y);
   // var img  = loadImage("assets/asteroid"+floor(random(0,3))+".png");
-  var img  = loadImage("assets/ring1.png");
+  var img  = loadImage("assets/trump1.png");
   r.addImage(img);
   // r.setSpeed(2.5-(type/2), random(360));
   // if (dir == true) { 
