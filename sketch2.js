@@ -2,6 +2,8 @@ var asteroids;
 var ringBlocks;
 var trumps;
 
+var particleImage;
+
 var ringBlockImage;
 var ringRadius, stepVal;
 var numRingBlocks;
@@ -9,7 +11,8 @@ var numRingBlocks;
 var direction;
 var rotation;
 
-var hazTrump;
+var trumpDeath;
+var trumpSpawn;
 
 function setup() {
 	createCanvas(800,800);
@@ -18,11 +21,13 @@ function setup() {
 	ringBlocks = new Group();
 	trumps = new Group();
 
-	hazTrump = false;
+	trumpSpawn = (floor(random(1500, 3000)));
 
 	ringRadius = 300;
 	stepVal = 0;
 	numRingBlocks = 9;
+
+	particleImage = loadImage("assets/asteroids_particle.png");
 
 	for(var i = 0; i<2; i++) {
 		var ang = random(360);
@@ -49,7 +54,7 @@ function draw() {
 
 	fill(255);
 
-	if (millis() > 3000 && hazTrump === false ) {
+	if (millis() > trumpSpawn && trumps.length === 0 ) {
 		var tx = width/2;
 		var ty = height/2;
 
@@ -71,7 +76,11 @@ function draw() {
 
 	asteroids.bounce(ringBlocks);
 
+	asteroids.overlap(trumps, asteroidHit);
+	trumps.overlap(ringBlocks, trumpHit);
+
 	moveTrump();
+	asteroidSpawn();
 	drawSprites();
 }
 
@@ -98,7 +107,7 @@ function createAsteroid(type, x, y) {
 	var a = createSprite(x, y);
 	var img  = loadImage("assets/asteroid"+floor(random(0,3))+".png");
 	a.addImage(img);
-	a.setSpeed(2.5-(type/2), random(360));
+	a.setSpeed(3, random(360));
 	a.rotationSpeed = .5;
 	//a.debug = true;
 	a.type = type;
@@ -121,9 +130,10 @@ function createTrump(x, y){
 	var t = createSprite(x, y);
 	var img = loadImage("assets/trump1.png");
 	t.addImage(img);
-	t.setSpeed(2.5, random(360));
+	t.setSpeed(0.5, random(360));
 	t.rotationSpeed = .5;
-	t.mass = 2;
+	t.mass = 4;
+	t.MaxSpeed = 1;
 	t.setCollider("circle", 0, 0, 50);
 	trumps.add(t);
 	hazTrump = true;
@@ -131,7 +141,7 @@ function createTrump(x, y){
 }
 
 function moveTrump() {
-	if (hazTrump === false) return;
+	if (trumps.length < 1) return;
 
 	var t = trumps[0];
 	var tx = t.position.x;
@@ -160,7 +170,34 @@ function moveTrump() {
 		}
 	}
 	// the Donald moves towards its prey
-	t.attractionPoint(.2, asteroids[target].position.x, asteroids[target].position.y);
+	t.attractionPoint(.1, asteroids[target].position.x, asteroids[target].position.y);
+}
+
+function asteroidHit(asteroid, trump){
+	for(var i=0; i<10; i++) {
+	  var p = createSprite(asteroid.position.x, asteroid.position.y);
+	  p.addImage(particleImage);
+	  p.setSpeed(random(3,5), random(360));
+	  p.friction = 0.95;
+	  p.life = 15;
+	  }
+
+	asteroid.remove();
+
+}
+
+function trumpHit(trump, ringBlock){
+	for(var i=0; i<10; i++) {
+	  var p = createSprite(trump.position.x, trump.position.y);
+	  p.addImage(particleImage);
+	  p.setSpeed(random(3,5), random(360));
+	  p.friction = 0.95;
+	  p.life = 15;
+	  }
+
+	trumpDeath = millis();
+	trumpSpawn = trumpDeath + (floor(random(500,2000)));
+	trump.remove();
 }
 
 function rotateRings(speed) {
