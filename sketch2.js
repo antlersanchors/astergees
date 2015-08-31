@@ -14,7 +14,7 @@ function setup() {
 
 	ringRadius = 300;
 	stepVal = 10;
-	direction = 90;
+	direction = 0;
 
 	for (var i = 0; i<11; i++) {
 
@@ -31,11 +31,12 @@ function draw() {
 
 	fill(255);
 
-	if(keyDown(UP_ARROW))
-	{
-		rotateRings();
-	}
+	// if(keyDown(UP_ARROW))
+	// {
+	// 	rotateRings();
+	// }
 
+	rotateRings();
 	drawSprites();
 }
 
@@ -58,16 +59,33 @@ function createRingBlock(x, y) {
 }
 
 function rotateRings() {
-	direction += 2;
+
+	var prev_x;
+	var prev_y;
+	var new_x;
+	var new_y;
+
+	stepVal = 10;
 
 	for (i=0;i<ringBlocks.length; i++) {
 		var rb = ringBlocks[i];
+		rb.dir += 0.8; 
+		rb.setSpeed(2, rb.dir);
+		// var whatVel = rb.setVelocity;
+		// text(whatVel, width/2, 20);
 
-		var prev_x = rb.previousPosition.x;
-		var prev_y = rb.previousPosition.y;
-		var new_x = width/2 + ringRadius * cos(prev_x);
-        var new_y = height/2 + ringRadius * sin(prev_y);
-		rb.setVelocity(new_x, new_y);
+		// var old_dir = rb.getDirection();
+		// rb.setSpeed(.1, old_dir+1);
+		// float x=300*cos(radians(angle)) + width/2;
+  // 		float y=300*sin(radians(angle)) + height/2;
+
+		// prev_x = rb.position.x;
+		// prev_y = rb.position.y;
+
+		// stepVal += 100;
+		// new_x = width/2 + ringRadius * cos(stepVal);
+  //       new_y = height/2 + ringRadius * sin(stepVal);
+		// rb.setVelocity(new_x, new_y);
 
 	}
 
