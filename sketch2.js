@@ -22,7 +22,9 @@ function setup() {
         var px = width/2 + ringRadius * cos(stepVal);
         var py = height/2 + ringRadius * sin(stepVal);
 
-		createRingBlock(px, py);
+        var startingAngle = 360 / i; 
+
+		createRingBlock(px, py, startingAngle);
 	}
 }
 
@@ -40,7 +42,7 @@ function draw() {
 	drawSprites();
 }
 
-function createRingBlock(x, y) {
+function createRingBlock(x, y, angle) {
 	var rb = createSprite(x, y);
 	var img = loadImage("assets/trump1.png");
 	rb.addImage(img);
@@ -51,6 +53,7 @@ function createRingBlock(x, y) {
 	rb.maxSpeed = 3;
 	rb.setCollider("circle", 5, 0, 50);
 
+	rb.angle = angle;
 	rb.dir = direction;
 	// rb.setSpeed(3, rb.dir);
 
@@ -69,8 +72,16 @@ function rotateRings() {
 
 	for (i=0;i<ringBlocks.length; i++) {
 		var rb = ringBlocks[i];
-		var angle = rb.getDirection() + 1; 
-		rb.setSpeed(2, angle);
+		rb.setSpeed(2, rb.angle);
+		// var cx = rb.position.x;
+		// var cy = rb.position.y;
+
+		// x = cx + ringRadius * cos(radians(angle));
+  //       y = cy + ringRadius * sin(radians(angle));
+
+  		rb.angle += 1;
+  		if (rb.angle === 360) rb.angle = 0;
+        // rb.setVelocity(x, y);
 
 
 
