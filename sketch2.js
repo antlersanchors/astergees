@@ -33,12 +33,11 @@ function draw() {
 
 	fill(255);
 
-	// if(keyDown(UP_ARROW))
-	// {
-	// 	rotateRings();
-	// }
+	if(keyDown(UP_ARROW)) {
+		rotateRings();
+	}
 
-	rotateRings();
+	// rotateRings();
 	drawSprites();
 }
 
@@ -77,16 +76,16 @@ function rotateRings() {
 		var cy = rb.position.y;
 
 		var angleBetween = atan2(height/2 - cy, width/2 - cx);
-		var newAngle = degrees(angleBetween);
+		var newAngle = degrees(angleBetween) + 90;
 		if(newAngle > 360) newAngle = 0;
 
 
-  		rb.angle += 1;
+  		// rb.angle += 5;
 		// x = width/2 + ringRadius * cos(radians(rb.angle));
   //       y = height/2 + ringRadius * sin(radians(rb.angle));
 
-  		if (rb.angle > 360) rb.angle = 0;
-        rb.setSpeed(3, newAngle);
+  		// if (rb.angle > 360) rb.angle = 0;
+        rb.setSpeed(10, newAngle);
 
 
 		// var whatVel = rb.setVelocity;
