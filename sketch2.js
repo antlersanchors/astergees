@@ -1,21 +1,28 @@
 var asteroids;
 var ringBlocks;
+var trumps;
 
 var ringBlockImage;
 var ringRadius, stepVal;
+var numRingBlocks;
 
 var direction;
 var rotation;
+
+var hazTrump;
 
 function setup() {
 	createCanvas(800,800);
 
 	asteroids = new Group();
 	ringBlocks = new Group();
+	trumps = new Group();
+
+	hazTrump = false;
 
 	ringRadius = 300;
-	stepVal = 10;
-	direction = 0;
+	stepVal = 0;
+	numRingBlocks = 9;
 
 	for(var i = 0; i<2; i++) {
 		var ang = random(360);
@@ -24,9 +31,9 @@ function setup() {
 		createAsteroid(3, px, py);
 	}
 	
-	for (var i = 0; i<11; i++) {
+	for (var i = 0; i<numRingBlocks; i++) {
 
-        stepVal += 100;
+        stepVal += 360/numRingBlocks;
         var px = width/2 + ringRadius * cos(stepVal);
         var py = height/2 + ringRadius * sin(stepVal);
 
@@ -42,6 +49,13 @@ function draw() {
 
 	fill(255);
 
+	if (millis() > 3000 && hazTrump === false ) {
+		var tx = width/2;
+		var ty = height/2;
+
+		createTrump(tx, ty);
+	}
+
 	if(keyDown(UP_ARROW)) {
 		rotation = 1;
 		rotateRings(rotation);
@@ -56,19 +70,21 @@ function draw() {
 	}
 
 	asteroids.bounce(ringBlocks);
+
+	moveTrump();
 	drawSprites();
 }
 
 function createRingBlock(x, y, angle) {
 	var rb = createSprite(x, y);
-	var img = loadImage("assets/trump1.png");
+	var img = loadImage("assets/doge_block.png");
 	rb.addImage(img);
 
-	// rb.debug = true;
+	rb.debug = true;
 
 	// rb.mass = 2;
 	rb.maxSpeed = 3;
-	rb.setCollider("circle", 5, 0, 50);
+	rb.setCollider("square", 5, 0, 50);
 
 	rb.angle = angle;
 	rb.dir = direction;
@@ -99,6 +115,52 @@ function createAsteroid(type, x, y) {
 	a.setCollider("circle", 0, 0, 50);
 	asteroids.add(a);
 	return a;
+}
+
+function createTrump(x, y){
+	var t = createSprite(x, y);
+	var img = loadImage("assets/trump1.png");
+	t.addImage(img);
+	t.setSpeed(2.5, random(360));
+	t.rotationSpeed = .5;
+	t.mass = 2;
+	t.setCollider("circle", 0, 0, 50);
+	trumps.add(t);
+	hazTrump = true;
+	return t;
+}
+
+function moveTrump() {
+	if (hazTrump === false) return;
+
+	var t = trumps[0];
+	var tx = t.position.x;
+	var ty = t.position.y;
+	var ranges = new Array();
+	var min = 0;
+	var target;
+
+	// check distance from the Donald to the asteroids
+	for(i=0;i<asteroids.length;i++){
+		var a = asteroids[i];
+		var ax = a.position.x;
+		var ay = a.position.y;
+		var rx = tx - ax;
+		rx = rx * rx;
+		var ry = ty - ay;
+		ry = ry * ry;
+		
+		append(ranges, Math.sqrt(rx + ry));
+	}
+	// find the closest asteroid
+	for(j=0;j<ranges.length;j++){
+		if (ranges[j] < min || j === 0){
+			min = ranges[j];
+			target = j;
+		}
+	}
+	// the Donald moves towards its prey
+	t.attractionPoint(.2, asteroids[target].position.x, asteroids[target].position.y);
 }
 
 function rotateRings(speed) {
