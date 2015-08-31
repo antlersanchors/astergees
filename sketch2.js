@@ -17,6 +17,13 @@ function setup() {
 	stepVal = 10;
 	direction = 0;
 
+	for(var i = 0; i<2; i++) {
+		var ang = random(360);
+		var px = width/2;
+		var py = height/2;
+		createAsteroid(3, px, py);
+	}
+	
 	for (var i = 0; i<11; i++) {
 
         stepVal += 100;
@@ -27,6 +34,7 @@ function setup() {
 
 		createRingBlock(px, py, startingAngle);
 	}
+
 }
 
 function draw() {
@@ -47,7 +55,7 @@ function draw() {
 		stopRings();
 	}
 
-	// rotateRings();
+	asteroids.bounce(ringBlocks);
 	drawSprites();
 }
 
@@ -64,9 +72,33 @@ function createRingBlock(x, y, angle) {
 
 	rb.angle = angle;
 	rb.dir = direction;
+	rb.immovable = true;
 
 	ringBlocks.add(rb);
 	return rb;
+}
+
+function createAsteroid(type, x, y) {
+	var a = createSprite(x, y);
+	var img  = loadImage("assets/asteroid"+floor(random(0,3))+".png");
+	a.addImage(img);
+	a.setSpeed(2.5-(type/2), random(360));
+	a.rotationSpeed = .5;
+	//a.debug = true;
+	a.type = type;
+
+	if(type == 3)
+	a.scale = .3;  
+	if(type == 2)
+	a.scale = .2;
+
+	if(type == 1)
+	a.scale = .1;
+
+	a.mass = 2+a.scale;
+	a.setCollider("circle", 0, 0, 50);
+	asteroids.add(a);
+	return a;
 }
 
 function rotateRings(speed) {
