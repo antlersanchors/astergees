@@ -2,7 +2,7 @@ var asteroids;
 var ringBlocks;
 var trumps;
 
-var particleImage;
+var particleImage, laserImage;
 
 var ringBlockImage;
 var ringRadius, stepVal;
@@ -15,6 +15,8 @@ var trumpDeath;
 var trumpSpawn;
 
 var rescueScore, trumpScore;
+
+var laser;
 
 var MARGIN = 50;
 
@@ -35,6 +37,7 @@ function setup() {
 	numRingBlocks = 9;
 
 	particleImage = loadImage("assets/asteroids_particle.png");
+	laserImage = loadImage("assets/rainbow.png");
 
 	for(var i = 0; i<2; i++) {
 		var ang = random(360);
@@ -80,12 +83,15 @@ function draw() {
 		rotateRings(rotation);
 	} if(keyWentUp(UP_ARROW)) {
 		stopRings();
-	} if (keyWentUp(DOWN_ARROW)) {
+	} if(keyWentUp(DOWN_ARROW)) {
 		stopRings();
 	}
 
-	asteroids.bounce(ringBlocks);
+	// if(mouseWentDown){
+	// 	fireLaser(mouseX, mouseY):
+	// }
 
+	asteroids.bounce(ringBlocks);
 	asteroids.overlap(trumps, asteroidHit);
 	trumps.overlap(ringBlocks, trumpHit);
 
@@ -240,7 +246,7 @@ function rotateRings(speed) {
 		
 		if(newAngle > 360) newAngle = 0;
 
-        rb.setSpeed(10, newAngle);
+        rb.setSpeed(15, newAngle);
         rb.angle = newAngle;
 
 	}
@@ -252,6 +258,11 @@ function stopRings() {
 		rb.setSpeed(0, rb.angle);
 	}
 }
+
+// function fireLaser(x, y){
+// 	laser = createSprite(x,y);
+// 	laser.addImage(laserImage);
+// }
 
 function checkPositions(){
 	if (asteroids.length < 1) return;
