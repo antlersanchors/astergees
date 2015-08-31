@@ -69,8 +69,11 @@ function rotateRings() {
 
 	for (i=0;i<ringBlocks.length; i++) {
 		var rb = ringBlocks[i];
-		rb.dir += 0.8; 
-		rb.setSpeed(2, rb.dir);
+		var angle = rb.getDirection() + 1; 
+		rb.setSpeed(2, angle);
+
+
+
 		// var whatVel = rb.setVelocity;
 		// text(whatVel, width/2, 20);
 
