@@ -72,17 +72,21 @@ function rotateRings() {
 
 	for (i=0;i<ringBlocks.length; i++) {
 		var rb = ringBlocks[i];
-		rb.setSpeed(2, rb.angle);
-		// var cx = rb.position.x;
-		// var cy = rb.position.y;
+		// rb.setSpeed(1.5, rb.angle);
+		var cx = rb.position.x;
+		var cy = rb.position.y;
 
-		// x = cx + ringRadius * cos(radians(angle));
-  //       y = cy + ringRadius * sin(radians(angle));
+		var angleBetween = atan2(height/2 - cy, width/2 - cx);
+		var newAngle = degrees(angleBetween);
+		if(newAngle > 360) newAngle = 0;
+
 
   		rb.angle += 1;
-  		if (rb.angle === 360) rb.angle = 0;
-        // rb.setVelocity(x, y);
+		// x = width/2 + ringRadius * cos(radians(rb.angle));
+  //       y = height/2 + ringRadius * sin(radians(rb.angle));
 
+  		if (rb.angle > 360) rb.angle = 0;
+        rb.setSpeed(3, newAngle);
 
 
 		// var whatVel = rb.setVelocity;
