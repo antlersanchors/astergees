@@ -14,6 +14,10 @@ var rotation;
 var trumpDeath;
 var trumpSpawn;
 
+var rescueScore, trumpScore;
+
+var MARGIN = 50;
+
 function setup() {
 	createCanvas(800,800);
 
@@ -22,6 +26,9 @@ function setup() {
 	trumps = new Group();
 
 	trumpSpawn = (floor(random(1500, 3000)));
+
+	rescueScore= 0;
+	trumpScore = 0;
 
 	ringRadius = 300;
 	stepVal = 0;
@@ -54,6 +61,9 @@ function draw() {
 
 	fill(255);
 
+	textAlign(CENTER);
+	text("Rescued: " + rescueScore + " " + "Trumped: " + trumpScore, width/2, 20);
+
 	if (millis() > trumpSpawn && trumps.length === 0 ) {
 		var tx = width/2;
 		var ty = height/2;
@@ -80,6 +90,7 @@ function draw() {
 	trumps.overlap(ringBlocks, trumpHit);
 
 	moveTrump();
+	checkPositions();	
 	asteroidSpawn();
 	drawSprites();
 }
@@ -89,7 +100,7 @@ function createRingBlock(x, y, angle) {
 	var img = loadImage("assets/doge_block.png");
 	rb.addImage(img);
 
-	rb.debug = true;
+	// rb.debug = true;
 
 	// rb.mass = 2;
 	rb.maxSpeed = 3;
@@ -141,7 +152,7 @@ function createTrump(x, y){
 }
 
 function moveTrump() {
-	if (trumps.length < 1) return;
+	if (trumps.length < 1 || asteroids.length < 1) return;
 
 	var t = trumps[0];
 	var tx = t.position.x;
@@ -183,6 +194,7 @@ function asteroidHit(asteroid, trump){
 	  }
 
 	asteroid.remove();
+	trumpScore += 1;
 
 }
 
@@ -198,6 +210,16 @@ function trumpHit(trump, ringBlock){
 	trumpDeath = millis();
 	trumpSpawn = trumpDeath + (floor(random(500,2000)));
 	trump.remove();
+}
+
+function asteroidSpawn(){
+	if (asteroids.length < 5){
+		if (floor(random(0,100)) % 20 === 0) {
+			px = width/2;
+			py = height/2;
+			createAsteroid(3, px, py);
+		}
+	}
 }
 
 function rotateRings(speed) {
@@ -229,4 +251,20 @@ function stopRings() {
 		var rb = ringBlocks[i];
 		rb.setSpeed(0, rb.angle);
 	}
+}
+
+function checkPositions(){
+	if (asteroids.length < 1) return;
+	for (var i=0;i<asteroids.length;i++){
+		var a = asteroids[i];
+		if (a.position.x<-MARGIN) score(a);
+		if (a.position.x>width+MARGIN) score(a);
+		if (a.position.y<-MARGIN) score(a);
+		if (a.position.y>height+MARGIN) score(a);
+	}
+}
+
+function score(victor){
+		rescueScore += 1;
+		victor.remove();
 }
